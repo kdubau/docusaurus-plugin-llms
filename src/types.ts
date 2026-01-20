@@ -119,6 +119,9 @@ export interface PluginOptions {
   
   /** Custom content to include at the root level of llms-full.txt (after title/description, before content sections) */
   fullRootContent?: string;
+  
+  /** Logging verbosity level for description validation warnings (default: 'warn') */
+  verbosity?: 'error' | 'warn' | 'info' | 'ignore';
 }
 
 /**

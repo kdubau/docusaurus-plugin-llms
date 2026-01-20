@@ -10,6 +10,54 @@ import * as YAML from 'yaml';
 import { PluginOptions } from './types';
 
 /**
+ * Type for verbosity levels
+ */
+export type Verbosity = 'error' | 'warn' | 'info' | 'ignore';
+
+/**
+ * Logging utility that respects the configured verbosity level
+ * @param message - The message to log
+ * @param level - The logging level (defaults to 'warn')
+ * @param configuredVerbosity - The configured verbosity level (defaults to 'warn')
+ */
+export function logWithVerbosity(
+  message: string,
+  level: Verbosity = 'warn',
+  configuredVerbosity: Verbosity = 'warn'
+): void {
+  // If configured verbosity is 'ignore', don't log anything
+  if (configuredVerbosity === 'ignore') {
+    return;
+  }
+  
+  // Define verbosity hierarchy: error > warn > info
+  const verbosityLevels: Record<Verbosity, number> = {
+    error: 3,
+    warn: 2,
+    info: 1,
+    ignore: 0,
+  };
+  
+  const configuredLevel = verbosityLevels[configuredVerbosity];
+  const messageLevel = verbosityLevels[level];
+  
+  // Only log if the message level is equal to or higher than configured level
+  if (messageLevel >= configuredLevel) {
+    switch (level) {
+      case 'error':
+        console.error(message);
+        break;
+      case 'warn':
+        console.warn(message);
+        break;
+      case 'info':
+        console.log(message);
+        break;
+    }
+  }
+}
+
+/**
  * Write content to a file
  * @param filePath - Path to write the file to
  * @param data - Content to write

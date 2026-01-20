@@ -46,6 +46,7 @@ export default function docusaurusPluginLLMs(
     keepFrontMatter = [],
     rootContent,
     fullRootContent,
+    verbosity = 'warn',
   } = options;
 
   const {
@@ -89,6 +90,7 @@ export default function docusaurusPluginLLMs(
       keepFrontMatter,
       rootContent,
       fullRootContent,
+      verbosity,
     }
   };
 
