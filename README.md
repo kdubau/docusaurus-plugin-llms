@@ -23,6 +23,7 @@ A Docusaurus plugin for generating LLM-friendly documentation following the [llm
 - [Installation](#installation)
 - [Configuration Options](#configuration-options)
 - [Available Options](#available-options)
+- [Verbosity Configuration](#verbosity-configuration)
 - [Path Transformation Examples](#path-transformation-examples)
 - [Document Ordering Examples](#document-ordering-examples)
 - [Custom LLM Files](#custom-llm-files)
@@ -134,6 +135,7 @@ module.exports = {
 | `pathTransformation`             | object   | `undefined`       | Path transformation options for URL construction              |
 | `removeDuplicateHeadings`        | boolean  | `false`           | Remove redundant content that duplicates heading text         |
 | `title`                          | string   | Site title        | Custom title to use in generated files                        |
+| `verbosity`                      | string   | `'warn'`          | Logging level: 'error', 'warn', 'info', or 'ignore'           |
 | `version`                        | string   | `undefined`       | Global version to include in all generated files              |
 | `customLLMFiles`                 | array    | `[]`              | Array of custom LLM file configurations                       |
 | `generateMarkdownFiles`          | boolean  | `false`           | Generate individual markdown files and link to them from llms.txt |
@@ -208,6 +210,49 @@ Base URL: https://api.example.com/v2`
   }
 ]
 ```
+
+### Verbosity Configuration
+
+The `verbosity` option controls the logging level for description validation warnings during the build process. This is useful for controlling build output noise and focusing on relevant issues.
+
+#### Available Levels
+
+- **`'error'`**: Only logs critical errors
+- **`'warn'`** (default): Logs warnings and errors
+- **`'info'`**: Logs all messages including informational ones
+- **`'ignore'`**: Suppresses all validation warnings
+
+#### Usage Examples
+
+**Suppress all validation warnings** (useful for production builds):
+```js
+{
+  verbosity: 'ignore'
+}
+```
+
+**Show only critical errors**:
+```js
+{
+  verbosity: 'error'
+}
+```
+
+**Show all messages** (useful during development):
+```js
+{
+  verbosity: 'info'
+}
+```
+
+#### Validation Warnings
+
+The plugin validates descriptions during processing and may warn about:
+- Descriptions containing markdown heading markers
+- Descriptions with HTML tags
+- Descriptions exceeding 500 characters
+
+These warnings help maintain clean, LLM-friendly descriptions. Use the `verbosity` option to control when these warnings appear in your build output.
 
 ### Path Transformation Examples
 

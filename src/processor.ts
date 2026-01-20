@@ -11,7 +11,9 @@ import {
   extractTitle, 
   cleanMarkdownContent, 
   applyPathTransformations,
-  resolvePartialImports
+  resolvePartialImports,
+  logWithVerbosity,
+  Verbosity
 } from './utils';
 
 /**
@@ -34,7 +36,8 @@ export async function processMarkdownFile(
   },
   excludeImports: boolean = false,
   removeDuplicateHeadings: boolean = false,
-  resolvedUrl?: string
+  resolvedUrl?: string,
+  verbosity: Verbosity = 'warn'
 ): Promise<DocInfo | null> {
   const content = await readFile(filePath);
   const { data, content: markdownContent } = matter(content);
@@ -141,17 +144,17 @@ export async function processMarkdownFile(
     
     // Validate that the description doesn't contain markdown headings
     if (description.match(/^#+\s+/m)) {
-      console.warn(`Warning: Description for "${title}" may still contain heading markers`);
+      logWithVerbosity(`Warning: Description for "${title}" may still contain heading markers`, 'warn', verbosity);
     }
     
     // Warn if the description contains HTML tags
     if (/<[^>]+>/g.test(description)) {
-      console.warn(`Warning: Description for "${title}" contains HTML tags`);
+      logWithVerbosity(`Warning: Description for "${title}" contains HTML tags`, 'warn', verbosity);
     }
     
     // Warn if the description is very long
     if (description.length > 500) {
-      console.warn(`Warning: Description for "${title}" is very long (${description.length} characters)`);
+      logWithVerbosity(`Warning: Description for "${title}" is very long (${description.length} characters)`, 'warn', verbosity);
     }
   }
   
@@ -324,13 +327,14 @@ export async function processFilesWithPatterns(
         context.options.pathTransformation,
         context.options.excludeImports || false,
         context.options.removeDuplicateHeadings || false,
-        resolvedUrl
+        resolvedUrl,
+        context.options.verbosity || 'warn'
       );
       if (docInfo !== null) {
         processedDocs.push(docInfo);
       }
     } catch (err: any) {
-      console.warn(`Error processing ${filePath}: ${err.message}`);
+      logWithVerbosity(`Error processing ${filePath}: ${err.message}`, 'warn', context.options.verbosity || 'warn');
     }
   }
   

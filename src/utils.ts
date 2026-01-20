@@ -10,6 +10,75 @@ import * as YAML from 'yaml';
 import { PluginOptions } from './types';
 
 /**
+ * Type for verbosity levels
+ */
+export type Verbosity = 'error' | 'warn' | 'info' | 'ignore';
+
+/**
+ * Logging utility that respects the configured verbosity level
+ * 
+ * Verbosity hierarchy (highest to lowest):
+ * - error (level 3): Only logs error messages
+ * - warn (level 2): Logs warn and error messages
+ * - info (level 1): Logs info, warn, and error messages
+ * - ignore (level 0): Suppresses all messages
+ * 
+ * A message is logged if its level is >= the configured verbosity level.
+ * 
+ * @param message - The message to log
+ * @param level - The logging level of this message (defaults to 'warn')
+ * @param configuredVerbosity - The configured verbosity level (defaults to 'warn')
+ * 
+ * @example
+ * // With verbosity set to 'warn', this will log
+ * logWithVerbosity('Warning message', 'warn', 'warn');
+ * 
+ * @example
+ * // With verbosity set to 'error', this will NOT log
+ * logWithVerbosity('Warning message', 'warn', 'error');
+ * 
+ * @example
+ * // With verbosity set to 'ignore', this will NOT log
+ * logWithVerbosity('Error message', 'error', 'ignore');
+ */
+export function logWithVerbosity(
+  message: string,
+  level: Verbosity = 'warn',
+  configuredVerbosity: Verbosity = 'warn'
+): void {
+  // If configured verbosity is 'ignore', don't log anything
+  if (configuredVerbosity === 'ignore') {
+    return;
+  }
+  
+  // Define verbosity hierarchy: error > warn > info
+  const verbosityLevels: Record<Verbosity, number> = {
+    error: 3,
+    warn: 2,
+    info: 1,
+    ignore: 0,
+  };
+  
+  const configuredLevel = verbosityLevels[configuredVerbosity];
+  const messageLevel = verbosityLevels[level];
+  
+  // Only log if the message level is equal to or higher than configured level
+  if (messageLevel >= configuredLevel) {
+    switch (level) {
+      case 'error':
+        console.error(message);
+        break;
+      case 'warn':
+        console.warn(message);
+        break;
+      case 'info':
+        console.log(message);
+        break;
+    }
+  }
+}
+
+/**
  * Write content to a file
  * @param filePath - Path to write the file to
  * @param data - Content to write
