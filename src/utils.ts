@@ -16,9 +16,30 @@ export type Verbosity = 'error' | 'warn' | 'info' | 'ignore';
 
 /**
  * Logging utility that respects the configured verbosity level
+ * 
+ * Verbosity hierarchy (highest to lowest):
+ * - error (level 3): Only logs error messages
+ * - warn (level 2): Logs warn and error messages
+ * - info (level 1): Logs info, warn, and error messages
+ * - ignore (level 0): Suppresses all messages
+ * 
+ * A message is logged if its level is >= the configured verbosity level.
+ * 
  * @param message - The message to log
- * @param level - The logging level (defaults to 'warn')
+ * @param level - The logging level of this message (defaults to 'warn')
  * @param configuredVerbosity - The configured verbosity level (defaults to 'warn')
+ * 
+ * @example
+ * // With verbosity set to 'warn', this will log
+ * logWithVerbosity('Warning message', 'warn', 'warn');
+ * 
+ * @example
+ * // With verbosity set to 'error', this will NOT log
+ * logWithVerbosity('Warning message', 'warn', 'error');
+ * 
+ * @example
+ * // With verbosity set to 'ignore', this will NOT log
+ * logWithVerbosity('Error message', 'error', 'ignore');
  */
 export function logWithVerbosity(
   message: string,

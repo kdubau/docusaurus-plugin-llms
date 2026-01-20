@@ -334,7 +334,7 @@ export async function processFilesWithPatterns(
         processedDocs.push(docInfo);
       }
     } catch (err: any) {
-      console.warn(`Error processing ${filePath}: ${err.message}`);
+      logWithVerbosity(`Error processing ${filePath}: ${err.message}`, 'warn', context.options.verbosity || 'warn');
     }
   }
   
